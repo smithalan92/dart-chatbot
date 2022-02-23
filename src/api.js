@@ -52,13 +52,27 @@ async function getNextTrainsForStation({ trainLimit, stationName }) {
 
   const trainData = xmlParser.parse(data);
 
-  if (!trainData?.ArrayOfObjStationData?.objStationData) return [];
+  const { objStationData } = trainData?.ArrayOfObjStation ?? {};
+
+  if (!objStationData) return [];
+
+  // If theres only a single XML entry for a train its parsed as an object
+  // instead of an array of objects... ( last train of the night )
+  if (!Array.isArray(objStationData)) {
+    // eslint-disable-next-line object-curly-newline
+    const { Expdepart, Direction, Traindate, Duein } = objStationData;
+    return [{
+      departDateTime: new Date(`${Traindate} ${Expdepart}`),
+      direction: Direction,
+      dueInMinutes: Duein,
+    }];
+  }
 
   // Looks like a lot, but we need to filter train types, and make sure the departure date
   // is after the current date, I've seen the API return trains that previously departed.
   // We also need to sort the array to make sure the closest departing trains are at the start
   // and then slice based on the station limit since you can't limit/sort on the api itself it seems
-  return trainData.ArrayOfObjStationData.objStationData
+  return objStationData
     .filter(({ Traintype, Expdepart, Traindate }) => Traintype === 'DART' && new Date(`${Traindate} ${Expdepart}`) > new Date())
     .map(({
       Expdepart, Direction, Traindate, Duein,
