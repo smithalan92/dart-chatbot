@@ -4,7 +4,7 @@ import { XMLParser } from 'fast-xml-parser';
 
 const xmlParser = new XMLParser();
 
-const PROXY_URL = 'http://urlproxy.mralansmith.com';
+const PROXY_URL = 'https://urlproxy.mralansmith.com';
 
 /**
  * Proxies the given get request due to GET issues on the irish rail api
