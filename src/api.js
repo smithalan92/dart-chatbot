@@ -52,7 +52,7 @@ async function getNextTrainsForStation({ trainLimit, stationName }) {
 
   const trainData = xmlParser.parse(data);
 
-  const { objStationData } = trainData?.ArrayOfObjStation ?? {};
+  const { objStationData } = trainData?.ArrayOfObjStationData ?? {};
 
   if (!objStationData) return [];
 
